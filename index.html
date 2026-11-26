@@ -355,22 +355,34 @@ AFRAME.registerComponent('touch-look', {
 <style>
 #empujar {
     position: fixed;
-    bottom: 35px;
-    right: 20px;
-    z-index: 1000;
-    padding: 18px 22px;
-    border: 2px solid white;
-    border-radius: 18px;
-    background: #98643B;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 85px;
+    height: 85px;
+
+    border: 2px solid rgba(255,255,255,0.8);
+    border-radius: 50%;
+
+    background: rgba(80, 80, 80, 0.35);
+
     color: white;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 42px;
+
+    display: none;
+
+    z-index: 1000;
     touch-action: none;
+
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
 }
 </style>
 
-<button id="empujar">EMPUJAR</button>
-
+<!-- <button id="empujar">EMPUJAR</button> -->
+<button id="empujar">
+    👆
+</button>
 <script>
 const jugador = document.querySelector("#jugador");
 const camara = document.querySelector("#camara");
@@ -477,7 +489,30 @@ const botonEmpujarDisco = document.querySelector("#empujar");
 
 let velocidadGiro = 0;
 let ultimoTiempoGiro = 0;
+// DISTANCIA PARA MOSTRAR LA MANITO
+function comprobarDistancia() {
 
+    const posicionJugador =
+        jugador.object3D.position;
+
+    const posicionDisco =
+        discoGiratorio.object3D.position;
+
+    const distancia = Math.sqrt(
+        Math.pow(posicionJugador.x - posicionDisco.x, 2) +
+        Math.pow(posicionJugador.z - posicionDisco.z, 2)
+    );
+
+    if (distancia < 2.5) {
+        botonEmpujarDisco.style.display = "block";
+    } else {
+        botonEmpujarDisco.style.display = "none";
+    }
+
+    requestAnimationFrame(comprobarDistancia);
+}
+
+comprobarDistancia();
 // APLICAR EMPUJE
 function empujarDisco() {
 
@@ -485,9 +520,14 @@ function empujarDisco() {
 
     velocidadGiro = Math.min(velocidadGiro, 9);
 
-    botonEmpujarDisco.textContent = "¡EMPUJADO!";
-}
+    botonEmpujarDisco.style.background =
+    "rgba(30, 180, 100, 0.55)";
 
+setTimeout(() => {
+    botonEmpujarDisco.style.background =
+        "rgba(80, 80, 80, 0.35)";
+}, 400);
+} 
 // BOTON TACTIL
 botonEmpujarDisco.addEventListener("click", () => {
     empujarDisco();
